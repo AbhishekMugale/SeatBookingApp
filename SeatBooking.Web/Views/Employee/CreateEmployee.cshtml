@@ -1,0 +1,62 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model SeatBooking.Web.Models.CreateEmployeeViewModel
+
+@{
+    ViewData["Title"] = "Create Employee";
+}
+
+<h1>Create Employee</h1>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
+}
+
+<form asp-controller="Employee" asp-action="CreateEmployee" method="post">
+    <div class="form-group">
+        <label for="Username">Username:</label>
+        <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Password">Password:</label>
+        <input type="password" id="Password" name="Password" class="form-control" value="@Model.Password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="RoleID">Role:</label>
+        <select id="RoleID" name="RoleID" class="form-control">
+            <!-- Add options for selecting roles here -->
+            <option value="1">Admin</option>
+            <option value="2">Employee</option>
+            <!-- Add more options if needed -->
+        </select>
+        <span asp-validation-for="RoleID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="FirstName">First Name:</label>
+        <input type="text" id="FirstName" name="FirstName" class="form-control" value="@Model.FirstName" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="LastName">Last Name:</label>
+        <input type="text" id="LastName" name="LastName" class="form-control" value="@Model.LastName" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    
+
+    
+
+    <!-- Add more form fields for IsActive, CreatedDate, CreatedBy if needed -->
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

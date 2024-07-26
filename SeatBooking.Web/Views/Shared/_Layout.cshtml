@@ -1,0 +1,378 @@
+﻿@{
+    var isAdminDashboard = Context.Request.Path.HasValue && Context.Request.Path.Value.ToLower().Contains("/employee/admindashboard");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SeatBooking.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SeatBooking.Web.styles.css" asp-append-version="true" />
+    <style>
+        .back-button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #0056b3;
+            }
+
+        /* Ensure the navbar remains fixed at the top */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        /* Add background image to body */
+        body {
+            background-image: url('/images/Desksseats.webp'); /* Ensure the path is correct and uses forward slashes */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+        }
+
+        /* Adjust container padding to prevent content from hiding under navbar */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding-top: 80px; /* Adjust according to your navbar height */
+            margin-top: 80px; /* Add this to prevent initial overlap with the fixed navbar */
+        }
+
+        /* Ensure full height scrolling */
+        html, body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        /* Ensure the footer sticks to the bottom */
+        footer {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+               @*  <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeatBooking.Web</a> *@
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
+                            </li>
+                        } *@
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav ml-auto align-items-center">
+                            @{
+                                if (User.IsInRole("Admin") && !isAdminDashboard)
+                                {
+                                    <li class="nav-item mr-1">
+                                        <!-- Adjusted mr-4 for more space -->
+                                        <button class="back-button" onclick="goBack()">Back</button>
+                                    </li>
+                                }
+                            }
+                            <li class="nav-item">
+                                <form class="form-inline my-2 my-lg-0" asp-controller="Login" asp-action="Logout" method="post">
+                                    <button class="btn btn-outline-success ml-1" type="submit">Logout</button> <!-- Adjusted ml-4 for more space -->
+                                </form>
+                            </li>
+                            <style>
+                                .back-button {
+                                    margin-right: 1cm; /* Adjusted margin for 2cm space */
+                                }
+
+                                .ml-5 {
+                                    margin-left: 1cm !important; /* Adjusted margin for 2cm space */
+                                }
+                            </style>
+                         </ul>
+
+
+                    }
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* Uncomment footer if needed *@
+    @* <footer class="border-top footer text-muted">
+    <div class="container">
+    &copy; 2024 - seatbooking.web - <a asp-area="" asp-controller="home" asp-action="privacy">privacy</a>
+    </div>
+    </footer> *@
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @{
+    var isAdminDashboard = Context.Request.Path.HasValue && Context.Request.Path.Value.ToLower().Contains("/employee/admindashboard");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SeatBooking.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SeatBooking.Web.styles.css" asp-append-version="true" />
+    <style>
+        .back-button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #0056b3;
+            }
+
+        /* Ensure the navbar remains fixed at the top */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        /* Adjust container padding to prevent content from hiding under navbar */
+        .container {
+            padding-top: 80px; /* Adjust according to your navbar height */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeatBooking.Web</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li> 
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav ml-auto align-items-center">
+                            @{
+                                if (User.IsInRole("Admin") && !isAdminDashboard)
+                                {
+                                    <li class="nav-item">
+                                        <button class="back-button" onclick="goBack()">Back</button>
+                                    </li>
+                                }
+                            }
+                            <li class="nav-item">
+                                <form class="form-inline my-2 my-lg-0" asp-controller="Login" asp-action="Logout" method="post">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    }
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+           <div class="container">
+            &copy; 2024 - seatbooking.web - <a asp-area="" asp-controller="home" asp-action="privacy">privacy</a>
+        </div> 
+    </footer>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+ *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* 6/6/2024
+@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SeatBooking.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SeatBooking.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeatBooking.Web</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <form class="form-inline my-2 my-lg-0" asp-controller="Login" asp-action="Logout" method="post">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - SeatBooking.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@
+
+
+
+
+

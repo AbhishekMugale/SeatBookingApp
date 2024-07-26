@@ -1,0 +1,88 @@
+﻿@model List<EmployeeViewModel>
+
+@{
+    ViewData["Title"] = "All Employees";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Employee Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa; /* Bootstrap default background color */
+        }
+
+        .container {
+            background-color: #ffffff; /* White background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .table {
+            margin-top: 20px;
+            background-color: #ffffff; /* White background for the table */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Employees</h1>
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Active</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in Model)
+                    {
+                        <tr>
+                            <td>@employee.Username</td>
+                            <td>@employee.FirstName</td>
+                            <td>@employee.LastName</td>
+                            <td>@(employee.IsActive ? "Yes" : "No")</td>
+                            <td>@employee.CreatedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@employee.CreatedBy</td>
+                            <td>
+                                <a asp-action="UpdateEmployee" asp-route-id="@employee.EmployeeId" class="btn btn-primary btn-sm">Update</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No employees available.</p>
+        }
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy4Ck4E80Aho66P6QilrE+NPndOJ4xa1D6"
+            crossorigin="anonymous"></script>
+</body>
+</html>

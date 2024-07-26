@@ -1,0 +1,209 @@
+﻿@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<h1>@ViewBag.WelcomeMessage</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="errorModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Error</h5>
+                </div>
+                <div class="modal-body">
+                    <p>@TempData["ErrorMessage"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.ActiveBooking != null)
+{
+    var bookingStartTime = Model.ActiveBooking.BookingDate;
+    var bookingDuration = Model.ActiveBooking.BookingDuration; // Assuming duration is in minutes
+
+    // Calculate end time based on duration
+    var bookingEndTime = bookingStartTime.AddDays(bookingDuration);
+
+    // Calculate total days of booking
+    var totalDays = (int)Math.Ceiling((bookingEndTime.Date - bookingStartTime.Date).TotalDays);
+
+    <div class="alert alert-info">
+        <h4>You have an active Active Booking </h4>
+        <p>Seat Number: @Model.ActiveBooking.SeatId</p>
+        <p>Booking Start Time: @bookingStartTime</p>
+        <p>Booking End Time: @bookingEndTime</p>
+        <p>Total Days of Booking: @totalDays</p> <!-- Display the total days of booking -->
+        <form asp-action="CancelBooking" method="post">
+            <input type="hidden" name="bookingId" value="@Model.ActiveBooking.BookingId" />
+            <button type="submit" class="btn btn-danger">Cancel Booking</button>
+        </form>
+    </div>
+}
+
+<button id="toggleSeatNumbersBtn" class="btn btn-primary">Show Available Seats</button>
+<div id="seatContainer" style="display: none;">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                @foreach (var seat in Model.AllSeats)
+                {
+                    var isActive = seat.IsActive;
+                    var hasActiveBooking = Model.SeatBookings.ContainsKey(seat.SeatId);
+                    var bookingEmployeeName = Model.BookingEmployeeNames.ContainsKey(seat.SeatId) ? Model.BookingEmployeeNames[seat.SeatId] : null;
+
+                    <div class="col-md-6 mb-3">
+                        <!-- Adjusted to col-md-6 for side by side display -->
+                        <div class="seat-card card">
+                            <img src="~/images/SeatDemoImage1.png" class="card-img-top seat-image" alt="Seat Image">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Seat Number: @seat.SeatNumber</h6>
+
+                                @if (hasActiveBooking)
+                                {
+                                    var booking = Model.SeatBookings[seat.SeatId];
+                                    var seatBookingDuration = booking.BookingDuration;
+                                    var seatBookingEndTime = booking.BookingDate.AddDays(seatBookingDuration);
+
+                                    <p class="card-text text-danger">Status : Booked by: @bookingEmployeeName</p>
+                                    <p class="card-text">Booking Duration: @seatBookingDuration days</p>
+                                    <p class="card-text">Free from: @seatBookingEndTime.ToString("yyyy-MM-dd")</p>
+                                }
+                                else if (isActive)
+                                {
+                                    <p class="card-text text-success">Status: Available</p>
+                                    <form asp-controller="Employee" asp-action="BookSeat" method="post">
+                                        <input type="hidden" name="seatId" value="@seat.SeatId" />
+
+                                        <label for="bookingDuration">Booking Duration:</label>
+                                        <select name="bookingDuration" id="bookingDuration" class="form-control mb-2">
+                                            <option value="1">1 day</option>
+                                            <option value="2">2 days</option>
+                                            <option value="3">3 days</option>
+                                        </select>
+
+                                        <button type="submit" class="btn btn-primary btn-sm">Book</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <p class="card-text text-danger">Status: Not available</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <img src="~/images/SeatLayout3.png" class="img-fluid seat-layout-image" alt="SeatLayout Image">
+        </div>
+    </div>
+
+    <style>
+        .seat-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .seat-image {
+            height: 100px; /* Adjusted height for better fit */
+            width: 100%; /* Full width for the image */
+            object-fit: contain; /* Ensure the entire image is visible without cropping */
+        }
+
+        .card-body {
+            padding: 10px;
+        }
+
+        .card-text, .card-subtitle {
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+
+        .btn-sm {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+        }
+
+        .card-text.text-success {
+            color: #28a745 !important;
+        }
+
+        .seat-layout-image {
+            width: 100%; /* Full width for the image */
+            height: 100%; /* Maintain aspect ratio */
+        }
+    </style>
+@* <div id="availableSeatsTable" style="display: none;">
+    @if (Model.Seats != null && Model.Seats.Count > 0)
+    {
+        <h3>Available Seats</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Seat ID</th>
+                    <th>Seat Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var seat in Model.Seats)
+                {
+                    <tr>
+                        <td>@seat.SeatId</td>
+                        <td>@seat.SeatNumber</td>
+                        <td>
+                            @if (seat.IsActive)
+                            {
+                                <form asp-controller="Employee" asp-action="BookSeat" method="post">
+                                    <input type="hidden" name="seatId" value="@seat.SeatId" />
+                                    <input type="number" name="bookingDuration" value="1" min="1" max="3" />
+                                    <button type="submit" class="btn btn-primary">Book</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not available</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No available seats.</p>
+    }
+</div> *@
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#toggleSeatNumbersBtn").click(function () {
+                $("#seatContainer").toggle();
+                // $("#availableSeatsTable").toggle();
+            });
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                    $('#errorModal').modal('show');
+                setTimeout(function () {
+                    $('#errorModal').modal('hide');
+                }, 3000);
+            </text>
+        }
+        });
+    </script>
+}

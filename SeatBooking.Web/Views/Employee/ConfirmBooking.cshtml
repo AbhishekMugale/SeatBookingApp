@@ -1,0 +1,28 @@
+﻿@model SeatBooking.Web.Models.ConfirmBookingViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Booking</h1>
+        <p>Seat Number: @Model.SeatNumber</p>
+        <p>Booking Duration: @Model.BookingDuration days</p>
+        <p>Are you sure you want to confirm this booking?</p>
+        <form asp-controller="Employee" asp-action="ConfirmBooking" method="post">
+            <input type="hidden" name="seatId" value="@Model.SeatId" />
+            <input type="hidden" name="bookingDuration" value="@Model.BookingDuration" />
+            <button type="submit" class="btn btn-success">Confirm</button>
+            <button type="button" class="btn btn-danger" onclick="goBack()">Cancel</button>
+        </form>
+    </div>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

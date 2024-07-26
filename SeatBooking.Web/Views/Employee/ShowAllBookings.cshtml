@@ -1,0 +1,209 @@
+﻿@model List<SeatBooking.Web.Models.BookingViewModel>
+
+@{
+    ViewData["Title"] = "All Bookings";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SeatBooking.Web</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa; /* Bootstrap default background color */
+        }
+
+        .container {
+            background-color: #ffffff; /* White background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            margin-bottom: 20px;
+        }
+
+        .table {
+            margin-top: 20px;
+            background-color: #ffffff; /* White background for the table */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Bookings</h1>
+
+        <div class="btn-group" role="group" aria-label="Filter Bookings">
+            <button type="button" class="btn btn-primary mr-2" onclick="filterBookings('today')">Today</button>
+            <button type="button" class="btn btn-primary mr-2" onclick="filterBookings('thisWeek')">This Week</button>
+            <button type="button" class="btn btn-primary" onclick="filterBookings('thisMonth')">This Month</button>
+        </div>
+
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Username</th> <!-- Change the header to Username -->
+                    <th>Seat ID</th>
+                    <th>Booking Date</th>
+                    <th>Booking Duration (In Days)</th>
+                    <th>Is Active</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookingTableBody">
+                @foreach (var booking in Model)
+                {
+                    <tr data-booking-date="@booking.BookingDate.ToString("yyyy-MM-dd")">
+                        <td>@booking.Username</td> <!-- Display the username -->
+                        <td>@booking.SeatId</td>
+                        <td>@booking.BookingDate.ToString("yyyy-MM-dd")</td>
+                        <td>@booking.BookingDuration</td>
+                        <td>@(booking.IsActive ? "Yes" : "No")</td>
+                        <td>
+                            @if ((User.IsInRole("Admin") || booking.EmployeeId.ToString() == User.Identity.Name) && booking.IsActive)
+                            {
+                                <form asp-action="CancelBooking" method="post">
+                                    <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                    <button type="submit" class="btn btn-danger">Cancel</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterBookings(filterType) {
+            const rows = document.querySelectorAll('#bookingTableBody tr');
+            const today = new Date();
+            const todayDateString = today.toISOString().split('T')[0]; // Get today's date in yyyy-MM-dd format
+
+            rows.forEach(row => {
+                const bookingDate = row.getAttribute('data-booking-date');
+
+                switch (filterType) {
+                    case 'today':
+                        row.style.display = bookingDate === todayDateString ? '' : 'none';
+                        break;
+                    case 'thisWeek':
+                        const startDate = getStartOfWeek(today); // Function to get start date of current week (Monday)
+                        const endDate = new Date(startDate);
+                        endDate.setDate(startDate.getDate() + 6); // End date is 6 days after start (Sunday)
+                        row.style.display = new Date(bookingDate) >= startDate && new Date(bookingDate) <= endDate ? '' : 'none';
+                        break;
+                    case 'thisMonth':
+                        row.style.display = new Date(bookingDate).getFullYear() === today.getFullYear() && new Date(bookingDate).getMonth() === today.getMonth() ? '' : 'none';
+                        break;
+                    default:
+                        row.style.display = '';
+                        break;
+                }
+            });
+        }
+
+        function getStartOfWeek(date) {
+            const day = date.getDay();
+            let diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday or not Monday
+            if (day !== 1) {
+                diff += (day === 0 ? -6 : 1);
+            }
+            return new Date(date.setDate(diff));
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy4Ck4E80Aho66P6QilrE+NPndOJ4xa1D6"
+            crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model List<SeatBooking.Web.Models.BookingViewModel>
+
+@{
+    ViewData["Title"] = "All Bookings";
+}
+
+<h1>All Bookings</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>Username</th> <!-- Change the header to Username -->
+            <th>Seat ID</th>
+            <th>Booking Date</th>
+            <th>Booking Duration(In Days)</th>
+            <th>Is Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.Username</td> <!-- Display the username -->
+                <td>@booking.SeatId</td>
+                <td>@booking.BookingDate.ToString("yyyy-MM-dd")</td>
+                <td>@booking.BookingDuration</td>
+                <td>@(booking.IsActive ? "Yes" : "No")</td>
+                <td>
+                    @if ((User.IsInRole("Admin") || booking.EmployeeId.ToString() == User.Identity.Name) && booking.IsActive)
+                    {
+                        <form asp-action="CancelBooking" method="post">
+                            <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> *@
+
+@* <th>Booking ID</th> *@
+@*<td>@booking.BookingId</td>*@
